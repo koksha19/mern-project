@@ -24,6 +24,15 @@ app.use((req, res, next) => {
 
 app.use('/feed', feedRoutes);
 
+// Error handing middleware
+app.use((error, req, res, next) => {
+  console.log(error);
+  const status = error.statusCode || 500;
+  const message = error.message;
+  const data = error.data;
+  res.status(status).json({ message: message, statusCode: status, data: data });
+});
+
 mongoose.connection.once('open', () => {
   app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);

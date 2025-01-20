@@ -17,19 +17,19 @@ const getPosts = (req, res) => {
   });
 };
 
-const createPost = async (req, res) => {
+const createPost = async (req, res, next) => {
   const errors = validationResult(req);
   const title = req.body.title;
   const content = req.body.content;
 
-  if (!errors.isEmpty()) {
-    return res.status(422).json({
-      message: 'Failed to create a product due to validation',
-      errors: errors.array(),
-    });
-  }
-
   try {
+    if (!errors.isEmpty()) {
+      const error = new Error('Failed to create a product due to validation');
+      error.statusCode = 422;
+      error.data = errors.array();
+      return next(error);
+    }
+
     const post = await Post.create({
       title: title,
       content: content,
@@ -43,9 +43,10 @@ const createPost = async (req, res) => {
       post: post,
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: 'Failed to create a product', error: error });
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
   }
 };
 

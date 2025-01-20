@@ -1,11 +1,12 @@
+const { ObjectId } = require('mongodb');
+
 const { validationResult } = require('express-validator');
 const Post = require('../models/Post');
 const handleError = require('../util/handleError');
 
 const getPosts = async (req, res, next) => {
-  const posts = await Post.find();
-
   try {
+    const posts = await Post.find();
     res.status(200).json({
       message: 'Successfully received posts',
       posts: posts,
@@ -45,4 +46,24 @@ const createPost = async (req, res, next) => {
   }
 };
 
-module.exports = { getPosts, createPost };
+const getPost = async (req, res, next) => {
+  const postId = req.params.postId;
+  console.log(postId);
+
+  try {
+    const post = await Post.findById(postId);
+    if (!post) {
+      const error = new Error('Failed to find post with id ' + postId);
+      error.statusCode = 404;
+      return next(error);
+    }
+    res.status(200).json({
+      message: 'Fetched post successfully',
+      post: post,
+    });
+  } catch (error) {
+    handleError(error, next);
+  }
+};
+
+module.exports = { getPosts, createPost, getPost };

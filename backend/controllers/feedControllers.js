@@ -10,26 +10,25 @@ const getPosts = (req, res) => {
         },
         createdAt: Date.now(),
       },
-      {
-        title: 'Post 2',
-        content: 'Content',
-        imageUrl: '/images/needful-things.png',
-        creator: {
-          name: 'Bebra',
-        },
-        createdAt: Date.now(),
-      },
     ],
   });
 };
 
 const createPost = (req, res) => {
-  const name = req.body.name;
-  const surname = req.body.surname;
+  const title = req.body.title;
+  const content = req.body.content;
 
   res.status(201).json({
     message: 'Successfully created a new post',
-    data: { id: new Date(), name: name, surname: surname },
+    post: {
+      _id: new Date(),
+      title: title,
+      content: content,
+      creator: {
+        name: 'Lev',
+      },
+      createdAt: Date.now(),
+    },
   });
 };
 

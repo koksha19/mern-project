@@ -1,28 +1,28 @@
-import React, { Component, Fragment } from "react";
+import React, { Component, Fragment } from 'react';
 
-import Backdrop from "../../Backdrop/Backdrop";
-import Modal from "../../Modal/Modal";
-import Input from "../../Form/Input/Input";
-import FilePicker from "../../Form/Input/FilePicker";
-import Image from "../../Image/Image";
-import { required, length } from "../../../util/validators";
-import { generateBase64FromImage } from "../../../util/image";
+import Backdrop from '../../Backdrop/Backdrop';
+import Modal from '../../Modal/Modal';
+import Input from '../../Form/Input/Input';
+import FilePicker from '../../Form/Input/FilePicker';
+import Image from '../../Image/Image';
+import { required, length } from '../../../util/validators';
+import { generateBase64FromImage } from '../../../util/image';
 
 const POST_FORM = {
   title: {
-    value: "",
+    value: '',
     valid: false,
     touched: false,
     validators: [required, length({ min: 5 })],
   },
   image: {
-    value: "",
+    value: '',
     valid: false,
     touched: false,
     validators: [required],
   },
   content: {
-    value: "",
+    value: '',
     valid: false,
     touched: false,
     validators: [required, length({ min: 5 })],
@@ -150,10 +150,10 @@ class FeedEdit extends Component {
               label="Title"
               control="input"
               onChange={this.postInputChangeHandler}
-              onBlur={this.inputBlurHandler.bind(this, "title")}
-              valid={this.state.postForm["title"].valid}
-              touched={this.state.postForm["title"].touched}
-              value={this.state.postForm["title"].value}
+              onBlur={this.inputBlurHandler.bind(this, 'title')}
+              valid={this.state.postForm['title'].valid}
+              touched={this.state.postForm['title'].touched}
+              value={this.state.postForm['title'].value}
             />
             <FilePicker
               id="image"
@@ -161,8 +161,8 @@ class FeedEdit extends Component {
               control="input"
               onChange={this.postInputChangeHandler}
               //onBlur={this.inputBlurHandler.bind(this, "image")}
-              valid={this.state.postForm["image"].valid}
-              touched={this.state.postForm["image"].touched}
+              valid={this.state.postForm['image'].valid}
+              touched={this.state.postForm['image'].touched}
             />
             <div className="new-post__preview-image">
               {!this.state.imagePreview && <p>Please choose an image.</p>}
@@ -176,10 +176,10 @@ class FeedEdit extends Component {
               control="textarea"
               rows="5"
               onChange={this.postInputChangeHandler}
-              onBlur={this.inputBlurHandler.bind(this, "content")}
-              valid={this.state.postForm["content"].valid}
-              touched={this.state.postForm["content"].touched}
-              value={this.state.postForm["content"].value}
+              onBlur={this.inputBlurHandler.bind(this, 'content')}
+              valid={this.state.postForm['content'].valid}
+              touched={this.state.postForm['content'].touched}
+              value={this.state.postForm['content'].value}
             />
           </form>
         </Modal>

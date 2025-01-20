@@ -2,9 +2,22 @@ const getPosts = (req, res) => {
   res.status(200).json({
     posts: [
       {
-        id: 1,
-        name: 'Lev',
-        surname: 'Bereza',
+        title: 'Post 1',
+        content: 'Content',
+        imageUrl: '/images/needful-things.png',
+        creator: {
+          name: 'Lev',
+        },
+        createdAt: Date.now(),
+      },
+      {
+        title: 'Post 2',
+        content: 'Content',
+        imageUrl: '/images/needful-things.png',
+        creator: {
+          name: 'Bebra',
+        },
+        createdAt: Date.now(),
       },
     ],
   });

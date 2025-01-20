@@ -1,6 +1,6 @@
 const express = require('express');
 
-const feedRoutes = require('./routes/feed');
+const feedRoutes = require('./routes/feedRoutes');
 
 const app = express();
 
@@ -15,7 +15,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/posts', feedRoutes);
+app.use('/feed', feedRoutes);
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);

@@ -1,20 +1,20 @@
 const { validationResult } = require('express-validator');
 const Post = require('../models/Post');
 
-const getPosts = (req, res) => {
-  res.status(200).json({
-    posts: [
-      {
-        title: 'Post 1',
-        content: 'Content',
-        imageUrl: '/images/needful-things.png',
-        creator: {
-          name: 'Lev',
-        },
-        createdAt: Date.now(),
-      },
-    ],
-  });
+const getPosts = async (req, res, next) => {
+  const posts = await Post.find();
+
+  try {
+    res.status(200).json({
+      message: 'Successfully received posts',
+      posts: posts,
+    });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
 };
 
 const createPost = async (req, res, next) => {

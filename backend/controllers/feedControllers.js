@@ -1,5 +1,6 @@
 const { validationResult } = require('express-validator');
 const Post = require('../models/Post');
+const handleError = require('../util/handleError');
 
 const getPosts = async (req, res, next) => {
   const posts = await Post.find();
@@ -10,10 +11,7 @@ const getPosts = async (req, res, next) => {
       posts: posts,
     });
   } catch (error) {
-    if (!error.statusCode) {
-      error.statusCode = 500;
-    }
-    next(error);
+    handleError(error, next);
   }
 };
 
@@ -43,10 +41,7 @@ const createPost = async (req, res, next) => {
       post: post,
     });
   } catch (error) {
-    if (!error.statusCode) {
-      error.statusCode = 500;
-    }
-    next(error);
+    handleError(error, next);
   }
 };
 

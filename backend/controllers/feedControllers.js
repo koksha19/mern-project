@@ -29,10 +29,21 @@ const createPost = async (req, res, next) => {
       return next(error);
     }
 
+    if (!req.file) {
+      const error = new Error('No image provided');
+      error.statusCode = 422;
+      error.data = errors.array();
+      return next(error);
+    }
+
+    let imageUrl = req.file.path;
+    imageUrl = imageUrl.replace('\\', '/');
+    console.log(imageUrl);
+
     const post = await Post.create({
       title: title,
       content: content,
-      imageUrl: 'images/needful-things.png',
+      imageUrl: imageUrl,
       creator: {
         name: 'Lev',
       },

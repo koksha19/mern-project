@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
+const multer = require('multer');
 
 const connectDb = require('./config/connectDb');
 const feedRoutes = require('./routes/feedRoutes');
@@ -10,12 +11,34 @@ const app = express();
 
 const PORT = process.env.PORT || 8080;
 
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'images');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Math.random() * 100000 + '-' + file.originalname);
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpeg' ||
+    file.mimetype === 'image/jpg'
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
 connectDb()
   .then(() => console.log('Connected to DB successfully.'))
   .catch((err) => console.log(err));
 
 app.use(express.json());
 app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use(multer({ storage: storage, fileFilter: fileFilter }).single('image'));
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');

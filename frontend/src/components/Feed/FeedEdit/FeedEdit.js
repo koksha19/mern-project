@@ -160,7 +160,7 @@ class FeedEdit extends Component {
               label="Image"
               control="input"
               onChange={this.postInputChangeHandler}
-              //onBlur={this.inputBlurHandler.bind(this, "image")}
+              onBlur={this.inputBlurHandler.bind(this, 'image')}
               valid={this.state.postForm['image'].valid}
               touched={this.state.postForm['image'].touched}
             />

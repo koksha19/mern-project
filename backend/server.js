@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const path = require('path');
 
 const connectDb = require('./config/connectDb');
 const feedRoutes = require('./routes/feedRoutes');
@@ -14,6 +15,7 @@ connectDb()
   .catch((err) => console.log(err));
 
 app.use(express.json());
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');

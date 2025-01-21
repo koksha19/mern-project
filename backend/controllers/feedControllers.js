@@ -32,6 +32,7 @@ const createPost = async (req, res, next) => {
     const post = await Post.create({
       title: title,
       content: content,
+      imageUrl: 'images/needful-things.png',
       creator: {
         name: 'Lev',
       },
@@ -48,7 +49,6 @@ const createPost = async (req, res, next) => {
 
 const getPost = async (req, res, next) => {
   const postId = req.params.postId;
-  console.log(postId);
 
   try {
     const post = await Post.findById(postId);

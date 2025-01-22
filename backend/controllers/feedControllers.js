@@ -195,4 +195,63 @@ const deletePost = async (req, res, next) => {
   }
 };
 
-module.exports = { getPosts, createPost, getPost, updatePost, deletePost };
+const getStatus = async (req, res, next) => {
+  const userId = req.userId;
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      const error = new Error('No such user');
+      error.statusCode = 404;
+      return next(error);
+    }
+
+    res
+      .status(200)
+      .json({ message: 'Fetched status successfully', status: user.status });
+  } catch (error) {
+    handleError(error, next);
+  }
+};
+
+const updateStatus = async (req, res, next) => {
+  const errors = validationResult(req);
+  const userId = req.userId;
+  const status = req.body.status;
+
+  if (!errors.isEmpty()) {
+    const error = new Error('Failed due to validation error');
+    error.statusCode = 422;
+    return next(error);
+  }
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      const error = new Error('No such user');
+      error.statusCode = 404;
+      return next(error);
+    }
+
+    user.status = status;
+    user.save().then((user) => {
+      res
+        .status(200)
+        .json({ message: 'Updated status successfully', user: user });
+    });
+  } catch (error) {
+    handleError(error, next);
+  }
+};
+
+module.exports = {
+  getPosts,
+  createPost,
+  getPost,
+  updatePost,
+  deletePost,
+  getStatus,
+  updateStatus,
+};

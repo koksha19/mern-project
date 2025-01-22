@@ -97,16 +97,16 @@ const updatePost = async (req, res, next) => {
       });
     }
 
+    post.title = title;
+    post.content = content;
+    post.imageUrl = imageUrl;
     post
-      .updateOne({
-        title: title,
-        content: content,
-        imageUrl: imageUrl,
-      })
-      .then(() => {
-        res
-          .status(200)
-          .json({ message: 'Updated post successfully', post: post });
+      .save()
+      .then((result) => {
+        res.status(200).json({
+          message: 'Updated post successfully',
+          post: result,
+        });
       })
       .catch(() => {
         const error = new Error('Server side error');

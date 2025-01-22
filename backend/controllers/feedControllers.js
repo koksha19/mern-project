@@ -177,10 +177,13 @@ const deletePost = async (req, res, next) => {
     });
 
     Post.deleteOne({ _id: postId })
-      .then((post) => {
-        res
-          .status(200)
-          .json({ message: 'Deleted post successfully', post: post });
+      .then(async () => {
+        const user = await User.findById(req.userId);
+        user.posts.pull(postId);
+        return user.save();
+      })
+      .then(() => {
+        res.status(200).json({ message: 'Deleted post successfully' });
       })
       .catch(() => {
         const error = new Error('Server side error');

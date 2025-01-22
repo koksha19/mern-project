@@ -5,11 +5,17 @@ const Post = require('../models/Post');
 const handleError = require('../util/handleError');
 
 const getPosts = async (req, res, next) => {
+  const page = req.query.page || 1;
+  const postPerPage = 2;
   try {
-    const posts = await Post.find();
+    const totalCount = await Post.countDocuments();
+    const posts = await Post.find()
+      .skip((page - 1) * postPerPage)
+      .limit(postPerPage);
     res.status(200).json({
       message: 'Successfully received posts',
       posts: posts,
+      totalItems: totalCount,
     });
   } catch (error) {
     handleError(error, next);

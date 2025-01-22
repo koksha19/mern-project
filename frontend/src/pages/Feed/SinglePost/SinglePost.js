@@ -13,6 +13,7 @@ class SinglePost extends Component {
 
   componentDidMount() {
     const postId = this.props.postId;
+    console.log(postId);
     fetch('http://localhost:8080/feed/post/' + postId)
       .then((res) => {
         if (res.status !== 200) {

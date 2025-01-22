@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Route, Routes, Navigate } from 'react-router-dom';
+import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 
 import Layout from './components/Layout/Layout';
 import Backdrop from './components/Backdrop/Backdrop';
@@ -60,7 +60,16 @@ class App extends Component {
   loginHandler = (event, authData) => {
     event.preventDefault();
     this.setState({ authLoading: true });
-    fetch('URL')
+    fetch('http://localhost:8080/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: authData.email,
+        password: authData.password,
+      }),
+    })
       .then((res) => {
         if (res.status === 422) {
           throw new Error('Validation failed.');
@@ -71,6 +80,7 @@ class App extends Component {
         return res.json();
       })
       .then((resData) => {
+        console.log(resData);
         this.setState({
           isAuth: true,
           token: resData.token,
@@ -153,7 +163,7 @@ class App extends Component {
           }
         />
         <Route
-          path="/:postId"
+          path="/post/:postId"
           element={
             <SinglePostWrapperPage
               userId={this.state.userId}
@@ -183,7 +193,7 @@ class App extends Component {
             />
           }
         />
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     );
 

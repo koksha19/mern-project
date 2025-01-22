@@ -100,6 +100,13 @@ const updatePost = async (req, res, next) => {
       return next(error);
     }
 
+    if (post.creator.toString() !== req.userId) {
+      const error = new Error('Unauthorized');
+      error.statusCode = 401;
+      error.data = errors.array();
+      return next(error);
+    }
+
     if (req.file) {
       await fs.unlink(`./${post.imageUrl}`, (err) => {
         if (err) console.error(err);
@@ -155,6 +162,12 @@ const deletePost = async (req, res, next) => {
     if (!post) {
       const error = new Error('Failed to delete post with id ' + postId);
       error.statusCode = 404;
+      return next(error);
+    }
+
+    if (post.creator.toString() !== req.userId) {
+      const error = new Error('Unauthorized');
+      error.statusCode = 401;
       return next(error);
     }
 

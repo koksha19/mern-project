@@ -6,6 +6,7 @@ const multer = require('multer');
 
 const connectDb = require('./config/connectDb');
 const feedRoutes = require('./routes/feedRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 
@@ -48,6 +49,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/feed', feedRoutes);
+app.use('/auth', authRoutes);
 
 // Error handing middleware
 app.use((error, req, res, next) => {

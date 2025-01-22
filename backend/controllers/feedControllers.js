@@ -2,6 +2,7 @@ const fs = require('fs');
 
 const { validationResult } = require('express-validator');
 const Post = require('../models/Post');
+const User = require('../models/User');
 const handleError = require('../util/handleError');
 
 const getPosts = async (req, res, next) => {
@@ -24,8 +25,8 @@ const getPosts = async (req, res, next) => {
 
 const createPost = async (req, res, next) => {
   const errors = validationResult(req);
-  const title = req.body.title;
-  const content = req.body.content;
+  const { title, content } = req.body;
+  const userId = req.userId;
 
   try {
     if (!errors.isEmpty()) {
@@ -49,14 +50,17 @@ const createPost = async (req, res, next) => {
       title: title,
       content: content,
       imageUrl: imageUrl,
-      creator: {
-        name: 'Lev',
-      },
+      creator: userId,
     });
 
-    res.status(201).json({
-      message: 'Successfully created a new post',
-      post: post,
+    const user = await User.findById(userId);
+    user.posts.push(post);
+    user.save().then(() => {
+      res.status(201).json({
+        message: 'Successfully created a new post',
+        post: post,
+        creator: { _id: user._id, name: user.name },
+      });
     });
   } catch (error) {
     handleError(error, next);

@@ -137,4 +137,36 @@ const getPost = async (req, res, next) => {
   }
 };
 
-module.exports = { getPosts, createPost, getPost, updatePost };
+const deletePost = async (req, res, next) => {
+  const postId = req.params.postId;
+
+  try {
+    const post = await Post.findById(postId);
+    if (!post) {
+      const error = new Error('Failed to delete post with id ' + postId);
+      error.statusCode = 404;
+      return next(error);
+    }
+
+    await fs.unlink(`./${post.imageUrl}`, (err) => {
+      if (err) console.error(err);
+      console.log('Deleted image');
+    });
+
+    Post.deleteOne({ _id: postId })
+      .then((post) => {
+        res
+          .status(200)
+          .json({ message: 'Deleted post successfully', post: post });
+      })
+      .catch(() => {
+        const error = new Error('Server side error');
+        error.httpStatusCode = 500;
+        return next(error);
+      });
+  } catch (error) {
+    handleError(error, next);
+  }
+};
+
+module.exports = { getPosts, createPost, getPost, updatePost, deletePost };

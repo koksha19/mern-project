@@ -8,8 +8,6 @@ import Paginator from '../../components/Paginator/Paginator';
 import Loader from '../../components/Loader/Loader';
 import ErrorHandler from '../../components/ErrorHandler/ErrorHandler';
 import './Feed.css';
-import post from '../../components/Feed/Post/Post';
-import { Form } from 'react-router-dom';
 
 class Feed extends Component {
   state = {
@@ -119,9 +117,7 @@ class Feed extends Component {
     formData.append('image', postData.image);
     let url = 'http://localhost:8080/feed/post';
     let method = 'POST';
-    console.log('hello');
     if (this.state.editPost) {
-      console.log('world');
       url = 'http://localhost:8080/feed/post/' + this.state.editPost._id;
       method = 'PUT';
     }
@@ -181,7 +177,9 @@ class Feed extends Component {
 
   deletePostHandler = (postId) => {
     this.setState({ postsLoading: true });
-    fetch('URL')
+    fetch('http://localhost:8080/feed/post/' + postId, {
+      method: 'DELETE',
+    })
       .then((res) => {
         if (res.status !== 200 && res.status !== 201) {
           throw new Error('Deleting a post failed!');

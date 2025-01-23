@@ -55,12 +55,11 @@ const createPost = async (req, res, next) => {
 
     const user = await User.findById(userId);
     user.posts.push(post);
-    user.save().then(() => {
-      res.status(201).json({
-        message: 'Successfully created a new post',
-        post: post,
-        creator: { _id: user._id, name: user.name },
-      });
+    await user.save();
+    res.status(201).json({
+      message: 'Successfully created a new post',
+      post: post,
+      creator: { _id: user._id, name: user.name },
     });
   } catch (error) {
     handleError(error, next);
@@ -117,19 +116,12 @@ const updatePost = async (req, res, next) => {
     post.title = title;
     post.content = content;
     post.imageUrl = imageUrl;
-    post
-      .save()
-      .then((result) => {
-        res.status(200).json({
-          message: 'Updated post successfully',
-          post: result,
-        });
-      })
-      .catch(() => {
-        const error = new Error('Server side error');
-        error.httpStatusCode = 500;
-        return next(error);
-      });
+    const updatedPost = await post.save();
+
+    res.status(200).json({
+      message: 'Updated post successfully',
+      post: updatedPost,
+    });
   } catch (error) {
     handleError(error, next);
   }
@@ -176,20 +168,11 @@ const deletePost = async (req, res, next) => {
       console.log('Deleted image');
     });
 
-    Post.deleteOne({ _id: postId })
-      .then(async () => {
-        const user = await User.findById(req.userId);
-        user.posts.pull(postId);
-        return user.save();
-      })
-      .then(() => {
-        res.status(200).json({ message: 'Deleted post successfully' });
-      })
-      .catch(() => {
-        const error = new Error('Server side error');
-        error.httpStatusCode = 500;
-        return next(error);
-      });
+    await Post.deleteOne({ _id: postId });
+    const user = await User.findById(req.userId);
+    user.posts.pull(postId);
+    await user.save();
+    res.status(200).json({ message: 'Deleted post successfully' });
   } catch (error) {
     handleError(error, next);
   }
@@ -236,11 +219,10 @@ const updateStatus = async (req, res, next) => {
     }
 
     user.status = status;
-    user.save().then((user) => {
-      res
-        .status(200)
-        .json({ message: 'Updated status successfully', user: user });
-    });
+    const updatedUser = await user.save();
+    res
+      .status(200)
+      .json({ message: 'Updated status successfully', user: updatedUser });
   } catch (error) {
     handleError(error, next);
   }

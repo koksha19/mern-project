@@ -1,6 +1,7 @@
 const fs = require('fs');
 
 const { validationResult } = require('express-validator');
+const io = require('../socket');
 const Post = require('../models/Post');
 const User = require('../models/User');
 const handleError = require('../util/handleError');
@@ -12,13 +13,12 @@ const getPosts = async (req, res, next) => {
   try {
     const totalCount = await Post.countDocuments();
     const posts = await Post.find()
+      .populate('creator')
       .skip((page - 1) * postPerPage)
       .limit(postPerPage);
-    const user = await User.findById(userId);
     res.status(200).json({
       message: 'Successfully received posts',
       posts: posts,
-      creator: user.name,
       totalItems: totalCount,
     });
   } catch (error) {
@@ -59,6 +59,10 @@ const createPost = async (req, res, next) => {
     const user = await User.findById(userId);
     user.posts.push(post);
     await user.save();
+    io.getSocket().emit('posts', {
+      action: 'create',
+      post: { ...post._doc, creator: { _id: req.userId, name: user.name } },
+    });
     res.status(201).json({
       message: 'Successfully created a new post',
       post: post,

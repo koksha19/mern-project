@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const multer = require('multer');
+const { Server } = require('socket.io');
 
 const connectDb = require('./config/connectDb');
 const feedRoutes = require('./routes/feedRoutes');
@@ -61,8 +62,15 @@ app.use((error, req, res, next) => {
 });
 
 mongoose.connection.once('open', () => {
-  app.listen(PORT, () => {
+  const server = app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
   });
+  const io = new Server(server, {
+    cors: {
+      origin: 'http://localhost:3000',
+    },
+  });
+  io.on('connection', (socket) => {
+    console.log('New client connected');
+  });
 });
-//

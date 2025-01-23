@@ -7,15 +7,18 @@ const handleError = require('../util/handleError');
 
 const getPosts = async (req, res, next) => {
   const page = req.query.page || 1;
+  const userId = req.userId;
   const postPerPage = 2;
   try {
     const totalCount = await Post.countDocuments();
     const posts = await Post.find()
       .skip((page - 1) * postPerPage)
       .limit(postPerPage);
+    const user = await User.findById(userId);
     res.status(200).json({
       message: 'Successfully received posts',
       posts: posts,
+      creator: user.name,
       totalItems: totalCount,
     });
   } catch (error) {
@@ -129,6 +132,7 @@ const updatePost = async (req, res, next) => {
 
 const getPost = async (req, res, next) => {
   const postId = req.params.postId;
+  const userId = req.userId;
 
   try {
     const post = await Post.findById(postId);
@@ -137,9 +141,12 @@ const getPost = async (req, res, next) => {
       error.statusCode = 404;
       return next(error);
     }
+    const creator = await User.findById(userId);
+    const name = creator.name;
     res.status(200).json({
       message: 'Fetched post successfully',
       post: post,
+      name: name,
     });
   } catch (error) {
     handleError(error, next);

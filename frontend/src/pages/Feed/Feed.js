@@ -67,8 +67,10 @@ class Feed extends Component {
         return res.json();
       })
       .then((resData) => {
+        console.log(resData);
         this.setState({
           posts: resData.posts.map((post) => {
+            post.creator = resData.creator;
             return {
               ...post,
               imagePath: post.imageUrl,
@@ -155,13 +157,12 @@ class Feed extends Component {
         return res.json();
       })
       .then((resData) => {
-        console.log(resData);
         const post = {
           _id: resData.post._id,
           title: resData.post.title,
           content: resData.post.content,
           image: resData.post.imageUrl,
-          creator: resData.post.creator,
+          creator: resData.creator.name,
           createdAt: resData.post.createdAt,
         };
         this.setState((prevState) => {
@@ -282,7 +283,7 @@ class Feed extends Component {
                 <Post
                   key={post._id}
                   id={`/post/${post._id}`}
-                  author={post.creator.name}
+                  author={post.creator}
                   date={new Date(post.createdAt).toLocaleDateString('en-US')}
                   title={post.title}
                   image={post.imageUrl}

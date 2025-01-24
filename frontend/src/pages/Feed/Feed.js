@@ -57,10 +57,7 @@ class Feed extends Component {
         updatedPosts.pop();
         updatedPosts.unshift(post);
       }
-      return {
-        posts: updatedPosts,
-        totalPosts: prevState.totalPosts + 1,
-      };
+      return this.loadPosts();
     });
   };
 

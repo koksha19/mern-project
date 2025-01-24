@@ -48,6 +48,8 @@ class Feed extends Component {
         this.addPost(data.post);
       } else if (data.action === 'update') {
         this.updatePost(data.post);
+      } else if (data.action === 'delete') {
+        this.loadPosts();
       }
     });
   }

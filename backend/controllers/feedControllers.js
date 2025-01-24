@@ -99,7 +99,7 @@ const updatePost = async (req, res, next) => {
       return next(error);
     }
 
-    const post = await Post.findById(postId);
+    const post = await Post.findById(postId).populate('creator');
     if (!post) {
       const error = new Error('No such post');
       error.statusCode = 404;
@@ -107,7 +107,7 @@ const updatePost = async (req, res, next) => {
       return next(error);
     }
 
-    if (post.creator.toString() !== req.userId) {
+    if (post.creator._id.toString() !== req.userId) {
       const error = new Error('Unauthorized');
       error.statusCode = 401;
       error.data = errors.array();
@@ -126,6 +126,10 @@ const updatePost = async (req, res, next) => {
     post.imageUrl = imageUrl;
     const updatedPost = await post.save();
 
+    io.getSocket().emit('posts', {
+      action: 'update',
+      post: updatedPost,
+    });
     res.status(200).json({
       message: 'Updated post successfully',
       post: updatedPost,
